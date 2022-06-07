@@ -1,14 +1,13 @@
 <script lang="ts">
-    export let getState;
-    export let dispatch;
+    export let wasm;
 
     import {ProgressCircular, MaterialApp, TextField, Button, Col} from 'svelte-materialify';
     import Persons from "./Persons.svelte";
 
-    getState.names.map(name => console.log("ID: ", name.id, "; FIRST_NAME: ", name.first_name));
+    wasm.get_state().names.map(name => console.log("ID: ", name.id, "; FIRST_NAME: ", name.first_name));
 
     let name = "";
-    let state = getState;
+    let state = wasm.get_state();
     let progress = false;
 
     const setName = (newName) => {
@@ -23,12 +22,13 @@
         progress = newProgress;
     }
 
-    const disp = (actionType, action) => {
+    const dispatch = (actionType, action) => {
         setProgress(true);
-        dispatch(actionType, action).then((arg0) => {
-            // console.log("arg0 " + arg0);
-            setState(getState);
+        wasm.dispatch(actionType, action).then((arg0) => {
+            // console.log("arg0: " + arg0);
+            setState(wasm.get_state());
             setProgress(false);
+            state.names.map(name => console.log("ID2: ", name.id, "; FIRST_NAME2: ", name.first_name));
         }, (err) => {
             console.log("ERROR " + err);
         });
@@ -39,28 +39,26 @@
     }
 
     const handleAddName = () => {
-        // const { dispatch } = props;
-        disp("AddName", {first_name: name});
-        // setPersons(names);
+        dispatch("AddName", {first_name: name});
     }
 </script>
 
 <MaterialApp>
     <Col cols={2}>
         {#if progress}
-            <ProgressCircular indeterminate color="primary"/>
+            <ProgressCircular indeterminate color="red"/>
         {/if}
         <br/>
         <br/>
-        <TextField bind:value={name} clearable>
+        <TextField bind:value={name} clearable color="red">
             Name
         </TextField>
-        <Button class="primary-color" on:click={() => handleAddName()}>
+        <Button class="red white-text" on:click={() => handleAddName()}>
             Add name
         </Button>
         <br/>
         <br/>
-        <Persons state={state}/>
+        <Persons bind:state/>
     </Col>
 </MaterialApp>
 
