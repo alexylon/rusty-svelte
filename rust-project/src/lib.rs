@@ -156,7 +156,7 @@ pub async fn dispatch(action_type: JsString, action: JsValue) -> Result<JsValue,
         .text()
         .await.unwrap();
 
-    for i in 0..100000000 {
+    for i in 0..30000000 {
         let b = (i as f64).sqrt();
     }
 

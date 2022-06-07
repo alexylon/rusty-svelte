@@ -1,41 +1,25 @@
 <script lang="ts">
-    export let wasm;
-
     import {ProgressCircular, MaterialApp, TextField, Button, Col, Row} from 'svelte-materialify';
     import Persons from "./Persons.svelte";
+    import { writable } from 'svelte/store';
 
-    wasm.get_state().names.map(name => console.log("ID: ", name.id, "; FIRST_NAME: ", name.first_name));
-
+    export let wasm;
+    let state = writable(wasm.get_state());
     let name = "";
-    let state = wasm.get_state();
     let progress = false;
 
-    const setName = (newName) => {
-        name = newName;
-    }
-
-    const setState = (newState) => {
-        state = newState;
-    }
-
-    const setProgress = (newProgress) => {
-        progress = newProgress;
-    }
+    $state.names.map(name => console.log("ID: ", name.id, "; FIRST_NAME: ", name.first_name));
 
     const dispatch = (actionType, action) => {
-        setProgress(true);
+        progress = true;
         wasm.dispatch(actionType, action).then((arg0) => {
             // console.log("arg0: " + arg0);
-            setState(wasm.get_state());
-            setProgress(false);
-            state.names.map(name => console.log("ID2: ", name.id, "; FIRST_NAME2: ", name.first_name));
+            progress = false;
+            state.set(wasm.get_state());
+            $state.names.map(name => console.log("ID2: ", name.id, "; FIRST_NAME2: ", name.first_name));
         }, (err) => {
             console.log("ERROR " + err);
         });
-    }
-
-    const handleChange = (e) => {
-        setName(e.target.value);
     }
 
     const handleAddName = () => {
@@ -54,7 +38,7 @@
 
     <div class="container">
         <Row class="align" style="height:600px">
-            <Col cols={2} offset={6} offset_md={4}>
+            <Col cols={3} offset={6} offset_md={4}>
                 <img src="images/rust_logo.png" alt="background image" width="55"/>
                 <img src="images/arrow_right_icon.png" alt="background image" width="55"/>
                 <img src="images/wasm_logo.png" alt="background image" width="55"/>
@@ -75,7 +59,7 @@
                 </Button>
                 <br/>
                 <br/>
-                <Persons bind:state/>
+                <Persons bind:names={$state.names}/>
             </Col>
         </Row>
     </div>
