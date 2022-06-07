@@ -44,9 +44,16 @@
 </script>
 
 <MaterialApp>
+    <img src="images/rust_logo.png" alt="background image" width="60"/>
+    <img src="images/arrow_right_icon.png" alt="background image" width="60"/>
+    <img src="images/wasm_logo.png" alt="background image" width="60"/>
+    <img src="images/plus_icon.png" alt="background image" width="60"/>
+    <img src="images/svelte_logo.png" alt="background image" width="60"/>
+    <br/>
+    <br/>
     <Col cols={2}>
         {#if progress}
-            <ProgressCircular indeterminate color="red"/>
+            <ProgressCircular indeterminate color="red" size={70} width={7}/>
         {/if}
         <br/>
         <br/>
